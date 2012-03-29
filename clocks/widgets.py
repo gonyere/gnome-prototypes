@@ -19,13 +19,15 @@
 """
 
 from gi.repository import Gtk, GObject, Gio, PangoCairo, Pango, GWeather
-from gi.repository import Gdk, GdkPixbuf
+from gi.repository import Gdk, TimezoneMap, GdkPixbuf
 import cairo, time
 
 class NewWorldClockWidget (Gtk.Box):
 
     __gsignals__ = {'add-clock': (GObject.SignalFlags.RUN_LAST,
-                    None, (GObject.TYPE_PYOBJECT,))}
+                    None, (GObject.TYPE_PYOBJECT,)),
+		    'cancel': (GObject.SignalFlags.RUN_LAST,
+                    None, ())}
 
     def __init__ (self):
         Gtk.Box.__init__(self)
@@ -77,6 +79,7 @@ class NewWorldClockWidget (Gtk.Box):
         self.searchEntry.connect("activate", self._set_city)
         self.searchEntry.connect("changed", self._set_city)
         self.addBtn.connect("clicked", self._add_clock)
+	self.cancelBtn.connect("clicked", self._cancel_clock)
         self.location = None
         self.show_all ()
         
@@ -91,7 +94,10 @@ class NewWorldClockWidget (Gtk.Box):
     def _add_clock(self, widget):
         location = self.searchEntry.get_location()
         self.emit("add-clock", location)
-    
+
+    def _cancel_clock(self, widget):
+	self.emit("cancel")
+
     def reset(self):
         self.searchEntry.set_text("")
     

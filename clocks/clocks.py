@@ -126,6 +126,7 @@ class World (Clock):
         window.get_children()[0].pack_start(widget, False, False, 0)
         widget.connect("add-clock", lambda w, l: self.add_clock(l))
         widget.connect_after("add-clock", lambda w, e: window.destroy())
+	widget.connect_after("cancel", lambda w: window.destroy())
         window.show_all()
 
     def close_new_dialog(self):
@@ -133,6 +134,7 @@ class World (Clock):
         self.notebook.set_current_page(0)
         self.addButton.set_sensitive(False)
         self.emit('show-requested')
+	widget.connect("cancel", lambda w, e: window.destroy ())
     
     def add_new_clock(self):
         location = self.newWorldClockWidget.get_selection()
