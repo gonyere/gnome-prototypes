@@ -29,6 +29,9 @@ import pytz, time, os
 STOPWATCH_LABEL_MARKUP = "<span font_desc=\"64.0\">%02i:%04.1f</span>"
 STOPWATCH_BUTTON_MARKUP = "<span font_desc=\"24.0\">%s</span>"
 
+TIMER_LABEL_MARKUP = "<span font_desc=\"64.0\">%02i:%04.1f</span>"
+TIMER_BUTTON_MARKUP = "<span font_desc=\"24.0\">%s</span>"
+
 GFILE = Gio.File.new_for_uri ('widgets.css')
 CSS_PROVIDER = Gtk.CssProvider()
 #CSS_PROVIDER.load_from_file(GFILE)
@@ -148,7 +151,6 @@ class Alarm (Clock):
     def __init__ (self):
         Clock.__init__ (self, "Alarm", True)
         self.button.set_sensitive (False)
-
 class Stopwatch (Clock):
 
     # State
@@ -265,6 +267,70 @@ class Stopwatch (Clock):
 
 class Timer (Clock):
     def __init__ (self):
-        Clock.__init__ (self, "Timer")
-        self.button.set_sensitive (False)
+        Clock.__init__ (self, "Timer", True)
+	self.button.set_sensitive (True)
+
+	vbox = Gtk.Box (orientation = Gtk.Orientation.VERTICAL)
+	box = Gtk.Box()
+	self.add (box)
+	box.pack_start (Gtk.Box(), True, True, 0)
+	box.pack_start (vbox, False, False, 0)
+	box.pack_end (Gtk.Box(), True, True, 0)
+
+	vbox.pack_start(Gtk.Label(""), True, True, 0)
+	
+	hbox = Gtk.Box()
+	self.timerleftButton = Gtk.Button ()
+	self.timerleftButton.set_size_request(150, -1)
+	self.timerleftLabel = Gtk.Label ()
+	self.timerleftButton.add (self.timerleftLabel)
+	self.timercenterButton = Gtk.Button ()
+	self.timercenterButton.set_size_request(150, -1)
+	self.timercenterLabel = Gtk.Label ()
+	self.timercenterButton.add (self.timercenterLabel)
+	self.timerrightButton = Gtk.Button ()
+	self.timerrightButton.set_size_request(150, -1)
+	self.timerrightLabel = Gtk.Label ()
+	self.timerrightButton.add (self.timerrightLabel)
+
+	self.timerleftButton.get_style_context ().add_class ("set-new-timer")
+	self.timercenterButton.get_style_context ().add_class ("change-timer")
+	self.timerrightButton.get_style_context ().add_class ("delete-timer")
+
+	hbox.pack_start (Gtk.Box(), True, True, 24)
+	hbox.pack_start (self.timerleftButton, True, True, 0)
+	hbox.pack_start (self.timercenterButton, True, True, 0)
+	hbox.pack_start (self.timerrightButton, True, True, 0)
+
+	box = Gtk.Box()
+	box.pack_start (Gtk.Box (), True, True, 0)
+	box.pack_start (hbox, True, True, 0)
+	box.pack_start (Gtk.Box (), True, True, 0)
+	box.pack_start (Gtk.Box (), True, True, 0)
+
+	vbox.pack_start (box, False, False, 32)
+	vbox.pack_start (Gtk.Box(), True, True, 0)
+	vbox.pack_start (Gtk.Box(), True, True, 0)
+	vbox.pack_start (Gtk.Box(), True, True, 0)
+	vbox.pack_end (Gtk.Box(), False, False, 0)
+
+	self.timerleftLabel.set_markup (TIMER_BUTTON_MARKUP%("New"))
+	self.timerleftLabel.set_padding (4, 0)
+	self.timercenterLabel.set_markup (TIMER_BUTTON_MARKUP%("Edit"))
+	self.timercenterLabel.set_padding(4, 0)
+	self.timerrightLabel.set_markup (TIMER_BUTTON_MARKUP%("Delete"))
+	self.timerrightLabel.set_padding (4, 0)
+	
+	self.timerleftButton.connect("clicked", self._timer_left_button_clicked)
+	self.timercenterButton.connect("clicked", self._timer_center_button_clicked)
+	self.timerrightButton.connect("clicked", self._timer_right_button_clicked)
+
+    def _timer_left_button_clicked (self, widget):
+	print "Left Button Selected"
+
+    def _timer_center_button_clicked (self, widget):
+	print "Center Button Selected"
+
+    def _timer_right_button_clicked (self, widget):
+	print "Right Button Selected"
 
